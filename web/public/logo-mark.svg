@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cifraMark" x1="50" y1="25" x2="160" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9945FF"/>
+      <stop offset="55%" stop-color="#6A68FF"/>
+      <stop offset="100%" stop-color="#14F195"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shackle -->
+  <path
+    d="M 72 92 L 72 68 C 72 48 84 36 100 36 C 116 36 128 48 128 68 L 128 92"
+    stroke="url(#cifraMark)"
+    stroke-width="14"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- C-shaped body (opens to the right like a cipher "C") -->
+  <path
+    d="M 152 105 C 145 92 128 82 108 82 L 80 82 C 58 82 40 100 40 130 C 40 160 58 178 80 178 L 108 178 C 128 178 145 168 152 155"
+    stroke="url(#cifraMark)"
+    stroke-width="22"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>
