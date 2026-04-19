@@ -78,8 +78,8 @@ function saveHistory(addr: string, txs: HistoryEntry[]) {
   } catch {}
 }
 
-function formatDate(ts: number): string {
-  return new Date(ts).toLocaleString('pt-BR', {
+function formatDate(ts: number, locale: string = 'pt-BR'): string {
+  return new Date(ts).toLocaleString(locale, {
     day: '2-digit',
     month: 'short',
     hour: '2-digit',
@@ -562,13 +562,14 @@ function BuyView(props: {
   onReset: () => void;
 }) {
   const { step, brlInput, setBrlInput, brlAmount, brlValid, estimatedSol, result, error, onGenerate, onConfirm, onReset } = props;
+  const { t } = useLanguage();
 
   if (step === 'idle') {
     return (
       <div className="space-y-5">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-2">
-            Pagar com
+            {t('buy.payWith')}
           </p>
           <div className="flex gap-2 p-1 bg-neutral-900/50 border border-neutral-800 rounded-full">
             <button className="flex-1 py-2 rounded-full bg-white text-black text-xs font-semibold">
@@ -578,7 +579,7 @@ function BuyView(props: {
               disabled
               className="flex-1 py-2 rounded-full text-xs font-medium text-neutral-500 flex items-center justify-center gap-1.5 cursor-not-allowed"
             >
-              Cartão
+              {t('buy.card')}
               <SoonBadge />
             </button>
           </div>
@@ -586,7 +587,7 @@ function BuyView(props: {
 
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-2">
-            Receber
+            {t('buy.receive')}
           </p>
           <div className="flex gap-2 p-1 bg-neutral-900/50 border border-neutral-800 rounded-full">
             <button className="flex-1 py-2 rounded-full cifra-gradient-bg text-black text-xs font-semibold">
@@ -611,7 +612,7 @@ function BuyView(props: {
 
         <div className="text-center">
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-3">
-            Valor
+            {t('buy.value')}
           </p>
           <div className="flex items-baseline justify-center gap-2">
             <span className="text-neutral-600 text-2xl">R$</span>
@@ -636,7 +637,7 @@ function BuyView(props: {
           disabled={!brlValid}
           className="w-full py-3.5 rounded-full cifra-gradient-bg text-black font-semibold text-sm shadow-[0_0_30px_rgba(153,69,255,0.2)] hover:shadow-[0_0_40px_rgba(153,69,255,0.35)] active:scale-[0.99] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
-          Gerar PIX
+          {t('buy.generate')}
         </button>
       </div>
     );
@@ -656,7 +657,7 @@ function BuyView(props: {
         </div>
 
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-1">Valor</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-1">{t('buy.value')}</p>
           <p className="text-3xl font-semibold">R$ {brlAmount.toFixed(2)}</p>
           <p className="text-xs text-neutral-500 mt-1">≈ {estimatedSol.toFixed(4)} SOL</p>
         </div>
@@ -666,13 +667,13 @@ function BuyView(props: {
             onClick={onReset}
             className="flex-1 py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-400 text-sm transition-colors"
           >
-            Cancelar
+            {t('buy.cancel')}
           </button>
           <button
             onClick={onConfirm}
             className="flex-1 py-3.5 rounded-full cifra-gradient-bg text-black font-semibold text-sm shadow-[0_0_30px_rgba(153,69,255,0.2)] transition-all"
           >
-            Já paguei
+            {t('buy.paid')}
           </button>
         </div>
       </div>
@@ -683,7 +684,7 @@ function BuyView(props: {
     return (
       <div className="py-12 text-center space-y-4">
         <div className="mx-auto w-8 h-8 border-2 border-neutral-600 border-t-white rounded-full animate-spin-slow" />
-        <p className="text-sm text-neutral-400">Enviando SOL…</p>
+        <p className="text-sm text-neutral-400">{t('buy.sending')}</p>
       </div>
     );
   }
@@ -701,22 +702,22 @@ function BuyView(props: {
               <span className="text-neutral-400 text-xl font-normal ml-2">SOL</span>
             </p>
             <p className="text-xs text-neutral-500 mt-1">
-              por R$ {result.brlAmount.toFixed(2)}
+              {t('buy.success.for')} R$ {result.brlAmount.toFixed(2)}
             </p>
           </div>
         </div>
 
         <div className="rounded-xl border border-neutral-900 bg-neutral-950/70 p-4 space-y-2">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">Recibo</p>
-          <FeeRow label="PIX" value="R$ 0,00" note="0%" />
+          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">{t('buy.receipt')}</p>
+          <FeeRow label={t('buy.fee.pix')} value={t('common.zero')} note={t('common.zeroPct')} />
           <FeeRow
-            label="Rede Solana"
+            label={t('buy.fee.network')}
             value={`${result.fees.network.sol.toFixed(6)} SOL`}
-            note="paga pela Cifra"
+            note={t('buy.fee.paidByCifra')}
           />
-          <FeeRow label="Cifra (spread)" value="R$ 0,00" note="0%" />
+          <FeeRow label={t('buy.fee.cifra')} value={t('common.zero')} note={t('common.zeroPct')} />
           <div className="h-px bg-neutral-900 my-1" />
-          <FeeRow label="Total de taxas" value="R$ 0,00" bold />
+          <FeeRow label={t('buy.fee.total')} value={t('common.zero')} bold />
         </div>
 
         <a
@@ -725,14 +726,14 @@ function BuyView(props: {
           rel="noopener noreferrer"
           className="block text-center text-xs text-neutral-400 hover:text-white transition-colors"
         >
-          Ver transação no Solscan ↗
+          {t('buy.viewSolscan')}
         </a>
 
         <button
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Comprar mais
+          {t('buy.again')}
         </button>
       </div>
     );
@@ -745,14 +746,14 @@ function BuyView(props: {
           !
         </div>
         <div>
-          <p className="font-medium">Algo deu errado</p>
+          <p className="font-medium">{t('buy.error')}</p>
           <p className="text-xs text-red-400 mt-1">{error}</p>
         </div>
         <button
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Tentar de novo
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -777,6 +778,7 @@ function SendView(props: {
   onReset: () => void;
 }) {
   const { step, to, setTo, amount, setAmount, amountNum, toValid, amountValid, balance, signature, error, onSend, onReset } = props;
+  const { t } = useLanguage();
 
   if (step === 'idle') {
     const valid = toValid && amountValid;
@@ -784,31 +786,31 @@ function SendView(props: {
       <div className="space-y-5">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-2">
-            Endereço Solana
+            {t('send.address')}
           </p>
           <input
             type="text"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            placeholder="Ex: 4Nd1m..."
+            placeholder={t('send.addressPh')}
             className="w-full bg-neutral-900/50 border border-neutral-800 rounded-xl px-4 py-3 text-sm font-mono text-white placeholder-neutral-600 focus:outline-none focus:border-[#9945FF] transition-colors"
           />
           {to && !toValid && (
-            <p className="text-xs text-red-400 mt-2">Endereço inválido</p>
+            <p className="text-xs text-red-400 mt-2">{t('send.invalid')}</p>
           )}
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600">
-              Valor em SOL
+              {t('send.amount')}
             </p>
             {balance !== null && (
               <button
                 onClick={() => setAmount(balance.toFixed(6))}
                 className="text-[10px] text-[#14F195] hover:underline"
               >
-                Máx: {balance.toFixed(4)}
+                {t('send.max')}: {balance.toFixed(4)}
               </button>
             )}
           </div>
@@ -823,7 +825,7 @@ function SendView(props: {
           />
           {amount && !amountValid && (
             <p className="text-xs text-red-400 mt-2">
-              {amountNum <= 0 ? 'Valor inválido' : 'Saldo insuficiente'}
+              {amountNum <= 0 ? t('send.invalidAmount') : t('send.insufficient')}
             </p>
           )}
         </div>
@@ -833,11 +835,11 @@ function SendView(props: {
           disabled={!valid}
           className="w-full py-3.5 rounded-full cifra-gradient-bg text-black font-semibold text-sm shadow-[0_0_30px_rgba(153,69,255,0.2)] hover:shadow-[0_0_40px_rgba(153,69,255,0.35)] active:scale-[0.99] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
-          Enviar
+          {t('send.button')}
         </button>
 
         <p className="text-[10px] text-neutral-600 text-center">
-          Taxa de rede ~0.000005 SOL (pago por você)
+          {t('send.fee')}
         </p>
       </div>
     );
@@ -847,7 +849,7 @@ function SendView(props: {
     return (
       <div className="py-12 text-center space-y-4">
         <div className="mx-auto w-8 h-8 border-2 border-neutral-600 border-t-white rounded-full animate-spin-slow" />
-        <p className="text-sm text-neutral-400">Enviando transação…</p>
+        <p className="text-sm text-neutral-400">{t('send.sending')}</p>
       </div>
     );
   }
@@ -863,7 +865,7 @@ function SendView(props: {
             <span className="cifra-gradient-text">{amountNum.toFixed(4)}</span>
             <span className="text-neutral-400 text-lg font-normal ml-2">SOL</span>
           </p>
-          <p className="text-xs text-neutral-500 mt-1">enviados para</p>
+          <p className="text-xs text-neutral-500 mt-1">{t('send.success.to')}</p>
           <p className="text-xs text-neutral-300 mt-1 font-mono">{shorten(to, 8)}</p>
         </div>
         <a
@@ -878,7 +880,7 @@ function SendView(props: {
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Nova transação
+          {t('send.again')}
         </button>
       </div>
     );
@@ -891,14 +893,14 @@ function SendView(props: {
           !
         </div>
         <div>
-          <p className="font-medium">Falhou</p>
+          <p className="font-medium">{t('common.failed')}</p>
           <p className="text-xs text-red-400 mt-1">{error}</p>
         </div>
         <button
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Tentar de novo
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -924,6 +926,7 @@ function WithdrawView(props: {
   onReset: () => void;
 }) {
   const { step, sol, setSol, pixKey, setPixKey, solNum, solValid, pixKeyValid, balance, brlAmount, result, error, onWithdraw, onReset } = props;
+  const { t } = useLanguage();
 
   if (step === 'idle') {
     const valid = solValid && pixKeyValid;
@@ -932,14 +935,14 @@ function WithdrawView(props: {
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600">
-              Sacar SOL
+              {t('withdraw.title')}
             </p>
             {balance !== null && (
               <button
                 onClick={() => setSol(balance.toFixed(6))}
                 className="text-[10px] text-[#14F195] hover:underline"
               >
-                Máx: {balance.toFixed(4)}
+                {t('send.max')}: {balance.toFixed(4)}
               </button>
             )}
           </div>
@@ -954,12 +957,12 @@ function WithdrawView(props: {
           />
           {sol && !solValid && (
             <p className="text-xs text-red-400 mt-2">
-              {solNum <= 0 ? 'Valor inválido' : 'Saldo insuficiente'}
+              {solNum <= 0 ? t('send.invalidAmount') : t('send.insufficient')}
             </p>
           )}
           {solValid && (
             <p className="text-xs text-neutral-500 mt-2">
-              Você recebe{' '}
+              {t('withdraw.youReceive')}{' '}
               <span className="cifra-gradient-text font-semibold">
                 R$ {brlAmount.toFixed(2)}
               </span>
@@ -969,13 +972,13 @@ function WithdrawView(props: {
 
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-2">
-            Chave PIX (destino)
+            {t('withdraw.pixKey')}
           </p>
           <input
             type="text"
             value={pixKey}
             onChange={(e) => setPixKey(e.target.value)}
-            placeholder="CPF, email, telefone ou aleatória"
+            placeholder={t('withdraw.pixKeyPh')}
             className="w-full bg-neutral-900/50 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#9945FF] transition-colors"
           />
         </div>
@@ -985,11 +988,11 @@ function WithdrawView(props: {
           disabled={!valid}
           className="w-full py-3.5 rounded-full cifra-gradient-bg text-black font-semibold text-sm shadow-[0_0_30px_rgba(153,69,255,0.2)] hover:shadow-[0_0_40px_rgba(153,69,255,0.35)] active:scale-[0.99] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
-          Sacar para PIX
+          {t('withdraw.button')}
         </button>
 
         <p className="text-[10px] text-neutral-600 text-center">
-          Taxa de rede ~0.000005 SOL · PIX gratuito · Liquidação instantânea
+          {t('withdraw.note')}
         </p>
       </div>
     );
@@ -999,7 +1002,7 @@ function WithdrawView(props: {
     return (
       <div className="py-12 text-center space-y-4">
         <div className="mx-auto w-8 h-8 border-2 border-neutral-600 border-t-white rounded-full animate-spin-slow" />
-        <p className="text-sm text-neutral-400">Processando saque…</p>
+        <p className="text-sm text-neutral-400">{t('withdraw.processing')}</p>
       </div>
     );
   }
@@ -1016,21 +1019,21 @@ function WithdrawView(props: {
               <span className="cifra-gradient-text">R$ {result.brlNet.toFixed(2)}</span>
             </p>
             <p className="text-xs text-neutral-500 mt-1">
-              por {result.solAmount.toFixed(4)} SOL · PIX para {result.pixKey}
+              {t('withdraw.success.for')} {result.solAmount.toFixed(4)} SOL · {t('withdraw.success.to')} {result.pixKey}
             </p>
           </div>
         </div>
 
         <div className="rounded-xl border border-neutral-900 bg-neutral-950/70 p-4 space-y-2">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">Recibo</p>
-          <FeeRow label="PIX" value="R$ 0,00" note="0%" />
-          <FeeRow label="Cifra (spread)" value="R$ 0,00" note="0%" />
+          <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">{t('buy.receipt')}</p>
+          <FeeRow label={t('buy.fee.pix')} value={t('common.zero')} note={t('common.zeroPct')} />
+          <FeeRow label={t('buy.fee.cifra')} value={t('common.zero')} note={t('common.zeroPct')} />
           <div className="h-px bg-neutral-900 my-1" />
-          <FeeRow label="Total de taxas" value="R$ 0,00" bold />
+          <FeeRow label={t('buy.fee.total')} value={t('common.zero')} bold />
         </div>
 
         <div className="space-y-1.5 text-center">
-          <p className="text-[10px] text-neutral-600 uppercase tracking-wider">End-to-end ID</p>
+          <p className="text-[10px] text-neutral-600 uppercase tracking-wider">{t('withdraw.e2eId')}</p>
           <p className="text-[10px] font-mono text-neutral-400 break-all">{result.pixId}</p>
         </div>
 
@@ -1040,14 +1043,14 @@ function WithdrawView(props: {
           rel="noopener noreferrer"
           className="block text-center text-xs text-neutral-400 hover:text-white transition-colors"
         >
-          Ver transação no Solscan ↗
+          {t('buy.viewSolscan')}
         </a>
 
         <button
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Novo saque
+          {t('withdraw.again')}
         </button>
       </div>
     );
@@ -1060,14 +1063,14 @@ function WithdrawView(props: {
           !
         </div>
         <div>
-          <p className="font-medium">Falhou</p>
+          <p className="font-medium">{t('common.failed')}</p>
           <p className="text-xs text-red-400 mt-1">{error}</p>
         </div>
         <button
           onClick={onReset}
           className="w-full py-3.5 rounded-full border border-neutral-800 hover:bg-neutral-900 text-neutral-300 text-sm transition-colors"
         >
-          Tentar de novo
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -1085,18 +1088,20 @@ function ReceiveView({
   onCopy: (v: string, field: string) => void;
   copiedField: string | null;
 }) {
+  const { t } = useLanguage();
+
   if (!address) {
-    return <p className="text-center text-sm text-neutral-500 py-8">Criando wallet…</p>;
+    return <p className="text-center text-sm text-neutral-500 py-8">{t('dash.creating')}</p>;
   }
 
   return (
     <div className="space-y-5 text-center">
       <div>
         <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-600 mb-2">
-          Receber SOL e SPL tokens
+          {t('receive.title')}
         </p>
         <p className="text-xs text-neutral-500">
-          Envie apenas na rede <span className="cifra-gradient-text font-semibold">Solana Devnet</span>
+          {t('receive.note.before')} <span className="cifra-gradient-text font-semibold">{t('receive.network')}</span>
         </p>
       </div>
 
@@ -1112,7 +1117,7 @@ function ReceiveView({
 
       <div className="rounded-xl border border-neutral-900 bg-neutral-950/70 p-4 space-y-2">
         <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 text-left">
-          Seu endereço
+          {t('receive.yourAddress')}
         </p>
         <p className="text-xs font-mono text-neutral-200 break-all text-left">{address}</p>
       </div>
@@ -1121,19 +1126,22 @@ function ReceiveView({
         onClick={() => onCopy(address, 'receive-addr')}
         className="w-full py-3.5 rounded-full cifra-gradient-bg text-black font-semibold text-sm"
       >
-        {copiedField === 'receive-addr' ? '✓ Copiado' : 'Copiar endereço'}
+        {copiedField === 'receive-addr' ? t('dash.copied') : t('receive.copy')}
       </button>
     </div>
   );
 }
 
 function HistoryView({ history }: { history: HistoryEntry[] }) {
+  const { t, locale } = useLanguage();
+  const dateLocale = locale === 'pt' ? 'pt-BR' : 'en-US';
+
   if (history.length === 0) {
     return (
       <div className="py-12 text-center space-y-2">
-        <p className="text-sm text-neutral-400">Nenhuma transação ainda</p>
+        <p className="text-sm text-neutral-400">{t('history.empty')}</p>
         <p className="text-xs text-neutral-600">
-          Suas compras e envios aparecerão aqui
+          {t('history.emptyHint')}
         </p>
       </div>
     );
@@ -1142,7 +1150,7 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
   return (
     <div className="space-y-3">
       <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-2">
-        Últimas transações
+        {t('history.latest')}
       </p>
       {history.map((tx) => (
         <div key={tx.signature} className="rounded-xl border border-neutral-900 bg-neutral-950/60 p-3">
@@ -1150,9 +1158,9 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium">
-                  <span className="text-[#14F195]">+</span> Comprou SOL
+                  <span className="text-[#14F195]">+</span> {t('history.buy')}
                 </span>
-                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp)}</span>
+                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp, dateLocale)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-mono">
@@ -1166,9 +1174,9 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
                 </span>
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-neutral-900/80">
-                <span className="text-[10px] text-neutral-600">Taxas</span>
+                <span className="text-[10px] text-neutral-600">{t('history.fees')}</span>
                 <span className="text-[10px] text-neutral-500">
-                  R$ {tx.fees.totalBrl.toFixed(2)} · rede {tx.fees.network.sol.toFixed(6)} SOL
+                  R$ {tx.fees.totalBrl.toFixed(2)} · {t('history.networkShort')} {tx.fees.network.sol.toFixed(6)} SOL
                 </span>
               </div>
               <a
@@ -1185,20 +1193,20 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium">
-                  <span className="text-red-400">−</span> Enviou SOL
+                  <span className="text-red-400">−</span> {t('history.send')}
                 </span>
-                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp)}</span>
+                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp, dateLocale)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-mono">
                   <span className="text-red-300 font-semibold">{tx.solAmount.toFixed(4)}</span> SOL
                 </span>
                 <span className="text-[10px] text-neutral-500 font-mono">
-                  para {shorten(tx.recipient, 6)}
+                  {t('history.sentTo')} {shorten(tx.recipient, 6)}
                 </span>
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-neutral-900/80">
-                <span className="text-[10px] text-neutral-600">Taxa de rede</span>
+                <span className="text-[10px] text-neutral-600">{t('history.fees.network')}</span>
                 <span className="text-[10px] text-neutral-500">~0.000005 SOL</span>
               </div>
             </div>
@@ -1207,9 +1215,9 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium">
-                  <span className="text-[#9945FF]">↓</span> Sacou para PIX
+                  <span className="text-[#9945FF]">↓</span> {t('history.withdraw')}
                 </span>
-                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp)}</span>
+                <span className="text-[10px] text-neutral-600">{formatDate(tx.timestamp, dateLocale)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-mono">
@@ -1222,7 +1230,7 @@ function HistoryView({ history }: { history: HistoryEntry[] }) {
                 </span>
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-neutral-900/80">
-                <span className="text-[10px] text-neutral-600">Destino · Taxas</span>
+                <span className="text-[10px] text-neutral-600">{t('history.destinationFees')}</span>
                 <span className="text-[10px] text-neutral-500">
                   {tx.pixKey.length > 16 ? shorten(tx.pixKey, 6) : tx.pixKey} · R$ {tx.fees.totalBrl.toFixed(2)}
                 </span>
@@ -1268,9 +1276,10 @@ function FeeRow({
 }
 
 function SoonBadge() {
+  const { t } = useLanguage();
   return (
     <span className="px-1.5 py-0.5 rounded-full bg-neutral-800 text-[9px] uppercase tracking-wider text-neutral-400">
-      Em breve
+      {t('common.soon')}
     </span>
   );
 }
